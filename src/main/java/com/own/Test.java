@@ -1,5 +1,6 @@
 package com.own;
 
+import com.own.service.UserService;
 import com.spring.MyOwnApplicationContext;
 
 /**
@@ -8,8 +9,7 @@ import com.spring.MyOwnApplicationContext;
 public class Test {
     public static void main(String[] args) {
         MyOwnApplicationContext applicationContext = new MyOwnApplicationContext(AppConfig.class);
-        System.out.println(applicationContext.getBean("userService"));
-        System.out.println(applicationContext.getBean("userService"));
-        System.out.println(applicationContext.getBean("userService"));
+        UserService userService = (UserService) applicationContext.getBean("userService");
+        userService.test();
     }
 }
