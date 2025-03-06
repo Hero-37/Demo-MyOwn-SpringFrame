@@ -4,6 +4,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,6 +26,12 @@ public class MyOwnApplicationContext {
      * Bean 定义信息
      */
     private ConcurrentHashMap<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+
+
+    /**
+     * 初始化处理器
+     */
+    private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
     public MyOwnApplicationContext(Class configClass) {
         this.configClass = configClass;
@@ -71,6 +79,12 @@ public class MyOwnApplicationContext {
                 ((BeanNameAware) instance).setBeanName(beanName);
             }
 
+            // 初始化前
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
+                instance = beanPostProcessor.postProcessBeforeInitialization(instance, beanName);
+            }
+
+
             // 初始化
             if (instance instanceof InitializingBean) {
                 try {
@@ -80,6 +94,10 @@ public class MyOwnApplicationContext {
                 }
             }
 
+            // 初始化后
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessors) {
+                instance = beanPostProcessor.postProcessAfterInitialization(instance, beanName);
+            }
 
             return instance;
         } catch (InstantiationException e) {
@@ -124,6 +142,12 @@ public class MyOwnApplicationContext {
                     try {
                         Class<?> clazz = classLoader.loadClass(className);
                         if (clazz.isAnnotationPresent(Component.class)) {
+
+                            if (BeanPostProcessor.class.isAssignableFrom(clazz)) {
+                                BeanPostProcessor postProcessor = (BeanPostProcessor) clazz.getDeclaredConstructor().newInstance();
+                                beanPostProcessors.add(postProcessor);
+                            }
+
                             // 表示当前这个类是一个 Bean
                             // 解析类 并生成 BeanDefinition(Bean定义信息), 判断当前类是 单例bean 还是 prototype bean
                             Component componentAnnotation = clazz.getDeclaredAnnotation(Component.class);
@@ -141,6 +165,14 @@ public class MyOwnApplicationContext {
                             beanDefinitionMap.put(beanName, beanDefinition);
                         }
                     } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
                         e.printStackTrace();
                     }
                 }
