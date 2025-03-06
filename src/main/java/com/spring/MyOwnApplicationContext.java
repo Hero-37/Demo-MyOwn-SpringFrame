@@ -38,7 +38,7 @@ public class MyOwnApplicationContext {
             // 单例 bean
             if ("singleton".equals(beanDefinition.getScope())) {
                 // 创建当前 bean 对象
-                Object bean = createBean(beanDefinition);
+                Object bean = createBean(beanName, beanDefinition);
                 singletonObjects.put(beanName, bean);
             } else {
 
@@ -51,7 +51,7 @@ public class MyOwnApplicationContext {
      * @param beanDefinition
      * @return
      */
-    public Object createBean(BeanDefinition beanDefinition) {
+    public Object createBean(String beanName, BeanDefinition beanDefinition) {
         Class clazz = beanDefinition.getClazz();
         try {
             Object instance = clazz.getDeclaredConstructor().newInstance();
@@ -64,6 +64,10 @@ public class MyOwnApplicationContext {
                     declaredField.setAccessible(true);
                     declaredField.set(instance, bean);
                 }
+            }
+
+            if (instance instanceof BeanNameAware) {
+                ((BeanNameAware) instance).setBeanName(beanName);
             }
 
             return instance;
@@ -146,7 +150,7 @@ public class MyOwnApplicationContext {
                 return bean;
             } else {
                 // 创建 bean 对象
-                Object bean = createBean(beanDefinition);
+                Object bean = createBean(beanName, beanDefinition);
                 return bean;
             }
         } else {
