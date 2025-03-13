@@ -1,86 +1,45 @@
 package com.minis.context;
 
 import com.minis.BeanDefinition;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.minis.beans.BeanFactory;
+import com.minis.beans.BeansException;
+import com.minis.beans.xml.SimpleBeanFactory;
+import com.minis.beans.xml.XmlBeanDefinitionReader;
+import com.minis.core.ClassPathXmlResource;
+import com.minis.core.Resource;
 
 /**
  * @author YuLong
  */
-public class ClassPathXmlApplicationContext {
+public class ClassPathXmlApplicationContext implements BeanFactory {
+
+    BeanFactory beanFactory;
 
     /**
-     * 对象信息集合
-     */
-    private List<BeanDefinition> beanDefinitions = new ArrayList<>();
-
-    private Map<String, Object> singletons = new HashMap<>();
-
-    /**
-     * 构造器获取外部配置，解析出Bean的定义，形成内存映像
-     * @param fileName
+     * context负责整合容器的启动过程，读外部配置，解析Bean定义，创建BeanFactory
      */
     public ClassPathXmlApplicationContext(String fileName) {
-        this.readXml(fileName);
-        this.instanceBeans();
+        Resource resource = new ClassPathXmlResource(fileName);
+        BeanFactory beanFactory = new SimpleBeanFactory();
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        reader.loadBeanDefinitions(resource);
+        this.beanFactory = beanFactory;
     }
 
     /**
-     * 读取指定名称的XML文件并解析其中的Bean配置信息
-     * @param fileName 要读取的XML文件的名称或路径
-     * @return 无返回值
+     * context再对外提供一个getBean，底下就是调用的BeanFactory对应的方法
+     * @param beanName 需要获取的Bean的名称
+     * @return 指定名称的Bean实例，类型为Object
+     * @throws BeansException 当Bean未找到或发生其他bean检索异常时抛出
      */
-    private void readXml(String fileName) {
-        SAXReader saxReader = new SAXReader();
-
-        try {
-            /* 通过类加载器获取XML文件的URL路径 */
-            Class<? extends ClassPathXmlApplicationContext> aClass = this.getClass();
-            ClassLoader classLoader = aClass.getClassLoader();
-            URL xmlPath = this.getClass().getClassLoader().getResource(fileName);
-            Document document = saxReader.read(xmlPath);
-            Element rootElement = document.getRootElement();
-
-            // 对配置文件中的每一个<bean>，进行处理
-            for (Element element : (List<Element>) rootElement.elements()) {
-                String beanId = element.attributeValue("id");
-                String className = element.attributeValue("class");
-                BeanDefinition beanDefinition = new BeanDefinition(beanId, className);
-                beanDefinitions.add(beanDefinition);
-            }
-        } catch (DocumentException e) {
-            /* 捕获并处理XML文档解析异常 */
-            e.printStackTrace();
-        }
+    @Override
+    public Object getBean(String beanName) throws BeansException {
+        return this.beanFactory.getBean(beanName);
     }
 
-    /**
-     * 利用反射创建Bean实例，并存储在singletons中
-     */
-    private void instanceBeans() {
-        for (BeanDefinition beanDefinition : beanDefinitions) {
-            try {
-                singletons.put(beanDefinition.getId(), Class.forName(beanDefinition.getClassName()).newInstance());
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
-    /**
-     * 这是对外的一个方法，让外部程序从容器中获取Bean实例，会逐步演化成核心方法
-     * @param beanName
-     * @return
-     */
-   public Object getBean(String beanName) {
-       return singletons.get(beanName);
-   }
+    @Override
+    public void registerBeanDefinition(BeanDefinition beanDefinition) {
+        this.beanFactory.registerBeanDefinition(beanDefinition);
+    }
 }

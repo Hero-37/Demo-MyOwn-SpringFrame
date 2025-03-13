@@ -19,6 +19,7 @@ public class ClassPathXmlResource implements Resource {
     public ClassPathXmlResource(String fileName) {
         SAXReader saxReader = new SAXReader();
         URL xmlPath = this.getClass().getClassLoader().getResource(fileName);
+        // 将配置文件装载进来，生成一个迭代器，可以用于遍历
         try {
             this.document =  saxReader.read(xmlPath);
             this.rootElement = document.getRootElement();
@@ -28,14 +29,13 @@ public class ClassPathXmlResource implements Resource {
         }
     }
 
-
     @Override
     public boolean hasNext() {
-        return false;
+        return this.elementIterator.hasNext();
     }
 
     @Override
     public Object next() {
-        return null;
+        return this.elementIterator.next();
     }
 }
