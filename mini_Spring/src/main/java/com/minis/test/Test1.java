@@ -9,7 +9,8 @@ import com.minis.context.ClassPathXmlApplicationContext;
 public class Test1 {
     public static void main(String[] args) throws BeansException {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
-        Aservice aservice = (Aservice) context.getBean("aService");
-        aservice.sayHello();
+        AserviceImpl aserviceImpl = (AserviceImpl) context.getBean("aService");
+        // aserviceImpl.setProperty1("Hello World!");
+        System.out.println(aserviceImpl.getProperty1());
     }
 }
