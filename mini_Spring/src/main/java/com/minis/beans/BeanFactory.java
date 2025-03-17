@@ -1,7 +1,5 @@
 package com.minis.beans;
 
-import com.minis.BeanDefinition;
-
 /**
  * @author YuLong
  */
@@ -15,9 +13,16 @@ public interface BeanFactory {
     Object getBean(String beanName) throws BeansException;
 
     /**
-     * 注册bean
+     * 判断bean是否存在
      * @param beanName
-     * @param beanDefinition
+     * @return
      */
-    void registerBeanDefinition(BeanDefinition beanDefinition);
+    Boolean containsBean(String beanName);
+
+    /**
+     * 注册bean, 根据类型
+     * @param beanName
+     * @param obj
+     */
+    void registerBean(String beanName, Object obj);
 }
