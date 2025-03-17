@@ -1,4 +1,4 @@
-package com.minis;
+package com.minis.beans.factory.config;
 
 /**
  * 对象描述信息

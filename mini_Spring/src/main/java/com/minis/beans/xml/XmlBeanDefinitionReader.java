@@ -1,6 +1,6 @@
 package com.minis.beans.xml;
 
-import com.minis.BeanDefinition;
+import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.core.Resource;
 import org.dom4j.Element;
 

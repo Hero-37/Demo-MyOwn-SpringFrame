@@ -1,6 +1,6 @@
 package com.minis.beans.xml;
 
-import com.minis.BeanDefinition;
+import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.BeanFactory;
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.support.DefaultSingletonBeanRegistry;
