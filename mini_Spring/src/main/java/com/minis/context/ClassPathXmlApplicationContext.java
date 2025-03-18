@@ -1,6 +1,6 @@
 package com.minis.context;
 
-import com.minis.beans.BeanFactory;
+import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.BeansException;
 import com.minis.beans.xml.SimpleBeanFactory;
 import com.minis.beans.xml.XmlBeanDefinitionReader;
@@ -10,7 +10,7 @@ import com.minis.core.Resource;
 /**
  * @author YuLong
  */
-public class ClassPathXmlApplicationContext implements BeanFactory {
+public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher {
 
     BeanFactory beanFactory;
 
@@ -37,12 +37,27 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
     }
 
     @Override
-    public Boolean containsBean(String beanName) {
+    public boolean containsBean(String beanName) {
         return this.beanFactory.containsBean(beanName);
     }
 
     @Override
-    public void registerBean(String beanName, Object obj) {
-        this.beanFactory.registerBean(beanName, obj);
+    public boolean isSingleton(String beanName) {
+        return false;
+    }
+
+    @Override
+    public boolean isPrototype(String beanName) {
+        return false;
+    }
+
+    @Override
+    public Class<?> getType(String beanName) {
+        return null;
+    }
+
+    @Override
+    public void publishEvent(ApplicationEvent event) {
+
     }
 }

@@ -35,6 +35,13 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
         return this.singletons.get(beanName);
     }
 
+    public void removeSingleton(String beanName) {
+        synchronized (this.singletons) {
+            this.singletons.remove(beanName);
+            this.beanNames.remove(beanName);
+        }
+    }
+
     @Override
     public boolean containsSingleton(String beanName) {
         return this.singletons.containsKey(beanName);
