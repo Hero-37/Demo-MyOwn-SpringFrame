@@ -22,6 +22,13 @@ public interface BeanFactory {
     boolean containsBean(String beanName);
 
     /**
+     * 注册bean
+     * @param beanName
+     * @param obj
+     */
+    void registerBean(String beanName, Object obj);
+
+    /**
      * 判断bean是否是单例
      * @param beanName
      * @return

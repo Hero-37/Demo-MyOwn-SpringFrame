@@ -42,6 +42,11 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
     }
 
     @Override
+    public void registerBean(String beanName, Object obj) {
+        this.beanFactory.registerBean(beanName, obj);
+    }
+
+    @Override
     public boolean isSingleton(String beanName) {
         return false;
     }
