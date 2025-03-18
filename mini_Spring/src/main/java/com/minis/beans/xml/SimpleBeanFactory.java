@@ -6,15 +6,18 @@ import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.support.BeanDefinitionRegistry;
 import com.minis.beans.factory.support.DefaultSingletonBeanRegistry;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author YuLong
  */
-public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
+public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
 
-    private Map<String, BeanDefinition> beanDefinitions = new ConcurrentHashMap<>(256);
+    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
+    private List<String> beanDefinitionNames = new ArrayList<>();
 
     public SimpleBeanFactory() {
     }
@@ -31,7 +34,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         Object singleton = this.getSingleton(beanName);
         // 如果此时还没有这个Bean的实例，则获取它的定义来创建实例
         if (singleton == null) {
-            BeanDefinition beanDefinition = beanDefinitions.get(beanName);
+            BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
             if (beanDefinition == null) {
                 // 未找到注册的Bean名称时抛出异常
                 throw new BeansException("No bean.");
@@ -57,7 +60,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
      * @param beanDefinition
      */
     public void registerBeanDefinition(BeanDefinition beanDefinition) {
-        this.beanDefinitions.put(beanDefinition.getId(), beanDefinition);
+        this.beanDefinitionMap.put(beanDefinition.getId(), beanDefinition);
     }
 
     @Override
@@ -72,16 +75,46 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
 
     @Override
     public boolean isSingleton(String beanName) {
-        return this.beanDefinitions.get(beanName).isSingleton();
+        return this.beanDefinitionMap.get(beanName).isSingleton();
     }
 
     @Override
     public boolean isPrototype(String beanName) {
-        return this.beanDefinitions.get(beanName).isPrototype();
+        return this.beanDefinitionMap.get(beanName).isPrototype();
     }
 
     @Override
     public Class<?> getType(String name) {
-        return this.beanDefinitions.get(name).getClass();
+        return this.beanDefinitionMap.get(name).getClass();
+    }
+
+    @Override
+    public void registerBeanDefinition(String name, BeanDefinition bd) {
+        this.beanDefinitionMap.put(name, bd);
+        this.beanDefinitionNames.add(name);
+        if (!bd.isLazyInit()) {
+            try {
+                getBean(name);
+            } catch (BeansException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void removeBeanDefinition(String name) {
+        this.beanDefinitionMap.remove(name);
+        this.beanDefinitionNames.remove(name);
+        this.removeSingleton(name);
+    }
+
+    @Override
+    public BeanDefinition getBeanDefinition(String name) {
+        return this.beanDefinitionMap.get(name);
+    }
+
+    @Override
+    public boolean containsBeanDefinition(String name) {
+        return this.beanDefinitionMap.containsKey(name);
     }
 }
