@@ -85,7 +85,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
 
     @Override
     public Class<?> getType(String name) {
-        return this.beanDefinitionMap.get(name).getClass();
+        return (Class<?>) this.beanDefinitionMap.get(name).getBeanClass();
     }
 
     @Override
