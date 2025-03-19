@@ -41,7 +41,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 // 未找到注册的Bean名称时抛出异常
                 throw new BeansException("No bean.");
             }
-            // singleton = Class.forName(beanDefinition.getClassName()).newInstance();
+
             singleton = createBean(beanDefinition);
 
             // 新注册这个 bean 实例
@@ -164,7 +164,20 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         }
 
         // 处理属性
-        PropertyValues propertyValues = beanDefinition.getPropertyValues();
+        this.handleProperties(beanDefinition, clz, obj);
+        return obj;
+    }
+
+    /**
+     * 处理属性,包括对象属性
+     * @param bd
+     * @param clz
+     * @param obj
+     */
+    private void handleProperties(BeanDefinition bd, Class<?> clz, Object obj) {
+        // 处理属性
+        System.out.println("handle properties foe bean: " + bd.getId());
+        PropertyValues propertyValues = bd.getPropertyValues();
         if (!propertyValues.isEmpty()) {
             for (int i = 0; i < propertyValues.size(); i++) {
                 // 对每一个属性, 分数据类型分别处理
@@ -172,21 +185,37 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 String pType = propertyValue.getType();
                 String pName = propertyValue.getName();
                 Object pValue = propertyValue.getValue();
+                boolean isRef = propertyValue.getIsRef();
                 Class<?>[] paramTypes = new Class<?>[1];
-                if ("String".equals(pType) || "lava.lang.String".equals(pType)) {
-                    paramTypes[0] = String.class;
-                } else if ("Integer".equals(pType) || "java.lang.Integer".equals(pType)) {
-                    paramTypes[0] = Integer.class;
-                    pValue = Integer.valueOf((String) pValue);
-                } else if ("int".equals(pType)) {
-                    paramTypes[0] = int.class;
-                    pValue = Integer.valueOf((String) pValue);
-                } else {
-                    // 默认为 String
-                    paramTypes[0] = String.class;
-                }
                 Object[] paramValues = new Object[1];
-                paramValues[0] = pValue;
+                if (!isRef) {
+                    if ("String".equals(pType) || "lava.lang.String".equals(pType)) {
+                        paramTypes[0] = String.class;
+                    } else if ("Integer".equals(pType) || "java.lang.Integer".equals(pType)) {
+                        paramTypes[0] = Integer.class;
+                        pValue = Integer.valueOf((String) pValue);
+                    } else if ("int".equals(pType)) {
+                        paramTypes[0] = int.class;
+                        pValue = Integer.valueOf((String) pValue);
+                    } else {
+                        // 默认为 String
+                        paramTypes[0] = String.class;
+                    }
+
+                    paramValues[0] = pValue;
+                } else {
+                    // is ref, create the dependent bean
+                    try {
+                        paramTypes[0] = Class.forName(pType);
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        paramValues[0] = getBean((String) pValue);
+                    } catch (BeansException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 // 按照 setXxxx 规范查找 setter 方法, 调用 setter 方法设置属性
                 String methodName = "set" + pName.substring(0, 1).toUpperCase() + pName.substring(1);
@@ -199,6 +228,5 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 }
             }
         }
-        return obj;
     }
 }
