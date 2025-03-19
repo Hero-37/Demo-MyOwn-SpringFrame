@@ -36,16 +36,27 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         Object singleton = this.getSingleton(beanName);
         // 如果此时还没有这个Bean的实例，则获取它的定义来创建实例
         if (singleton == null) {
-            BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
-            if (beanDefinition == null) {
-                // 未找到注册的Bean名称时抛出异常
-                throw new BeansException("No bean.");
+            //如果没有实例，则尝试从毛胚实例中获取
+            singleton = this.earlySingletonObjects.get(beanName);
+            if (singleton == null) {
+                //如果连毛胚都没有，则创建bean实例并注册
+                BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
+                if (beanDefinition == null) {
+                    // 未找到注册的Bean名称时抛出异常
+                    throw new BeansException("No bean.");
+                }
+
+                singleton = createBean(beanDefinition);
+
+                // 新注册这个 bean 实例
+                this.registerSingleton(beanName, singleton);
+
+                // 预留beanpostprocessor位置
+                // step 1: postProcessBeforeInitialization
+                // step 2: afterPropertiesSet
+                // step 3: init-method
+                // step 4: postProcessAfterInitialization
             }
-
-            singleton = createBean(beanDefinition);
-
-            // 新注册这个 bean 实例
-            this.registerSingleton(beanName, singleton);
         }
         return singleton;
     }
@@ -120,13 +131,34 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
      */
     private Object createBean(BeanDefinition beanDefinition) {
         Class<?> clz = null;
+        // 根据构造器属性创建对象, 此时的对象是毛胚实例
+        Object obj = doCreateBean(beanDefinition);
+        //存放到毛胚实例缓存中
+        this.earlySingletonObjects.put(beanDefinition.getId(), obj);
+        try {
+            clz = Class.forName(beanDefinition.getClassName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        // 处理属性
+        this.handleProperties(beanDefinition, clz, obj);
+        return obj;
+    }
+
+    /**
+     * 实例化Bean, 构造器属性
+     * @param bd
+     * @return
+     */
+    private Object doCreateBean(BeanDefinition bd) {
+        Class<?> clz = null;
         Object obj = null;
         Constructor<?> con = null;
 
         try {
-            clz = Class.forName(beanDefinition.getId());
+            clz = Class.forName(bd.getClassName());
             // 处理构造器参数
-            ArgumentValues argumentValues = beanDefinition.getConstructorArguments();
+            ArgumentValues argumentValues = bd.getConstructorArguments();
             // 如果有参数
             if (!argumentValues.isEmpty()) {
                 // 参数类型
@@ -137,11 +169,11 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 for (int i = 0; i < argumentValues.getArgumentCount(); i++) {
                     ArgumentValue indexedArgumentValue = argumentValues.getIndexedArgumentValue(i);
                     if ("String".equals(indexedArgumentValue.getType()) ||
-                    "lava.lang.String".equals(indexedArgumentValue.getType())) {
+                            "lava.lang.String".equals(indexedArgumentValue.getType())) {
                         paramTypes[i] = String.class;
                         paramValues[i] = indexedArgumentValue.getValue();
                     } else if ("Integer".equals(indexedArgumentValue.getType()) ||
-                    "java.lang.Integer".equals(indexedArgumentValue.getType())) {
+                            "java.lang.Integer".equals(indexedArgumentValue.getType())) {
                         paramValues[i] = Integer.class;
                         paramValues[i] = Integer.valueOf((String) indexedArgumentValue.getValue());
                     } else if ("int".equals(indexedArgumentValue.getType())) {
@@ -159,17 +191,15 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 // 直接创建实例
                 obj = con.newInstance();
             }
+            System.out.println(bd.getId() + " bean created. " + bd.getClassName() + " : " + obj.toString());
         } catch (Exception e) {
 
         }
-
-        // 处理属性
-        this.handleProperties(beanDefinition, clz, obj);
         return obj;
     }
 
     /**
-     * 处理属性,包括对象属性
+     * 处理属性,非构造器属性,包括对象属性
      * @param bd
      * @param clz
      * @param obj
