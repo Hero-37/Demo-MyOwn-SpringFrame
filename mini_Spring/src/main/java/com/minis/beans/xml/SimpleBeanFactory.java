@@ -141,7 +141,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
             e.printStackTrace();
         }
         // 处理属性
-        this.handleProperties(beanDefinition, clz, obj);
+        handleProperties(beanDefinition, clz, obj);
         return obj;
     }
 
