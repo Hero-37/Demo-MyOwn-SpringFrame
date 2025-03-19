@@ -36,7 +36,7 @@ public class ArgumentValues {
      * @param index
      * @return
      */
-    public ArgumentValue getArgumentValue(int index) {
+    public ArgumentValue getIndexedArgumentValue(int index) {
         return this.indexedArgumentValues.get(index);
     }
 

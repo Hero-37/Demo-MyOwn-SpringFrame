@@ -15,7 +15,13 @@ public class BeanDefinition {
      * bean 之间的依赖关系
      */
     private String[] dependsOn;
+    /**
+     * 构造器参数
+     */
     private ArgumentValues constructorArguments;
+    /**
+     * 属性值
+     */
     private PropertyValues propertyValues;
     /**
      * 初始化方法
