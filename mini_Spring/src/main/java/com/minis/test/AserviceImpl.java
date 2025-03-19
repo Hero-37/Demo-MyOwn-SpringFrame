@@ -8,6 +8,7 @@ public class AserviceImpl {
     private int level;
     private String property1;
     private String property2;
+    private BaseService ref1;
 
     public AserviceImpl() {
     }
