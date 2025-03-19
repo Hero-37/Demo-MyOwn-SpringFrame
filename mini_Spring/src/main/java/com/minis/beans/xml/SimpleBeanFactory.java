@@ -41,15 +41,8 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 // 未找到注册的Bean名称时抛出异常
                 throw new BeansException("No bean.");
             }
-            try {
-                singleton = Class.forName(beanDefinition.getClassName()).newInstance();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            // singleton = Class.forName(beanDefinition.getClassName()).newInstance();
+            singleton = createBean(beanDefinition);
 
             // 新注册这个 bean 实例
             this.registerSingleton(beanName, singleton);
@@ -120,6 +113,11 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         return this.beanDefinitionMap.containsKey(name);
     }
 
+    /**
+     * 创建Bean实例
+     * @param beanDefinition
+     * @return
+     */
     private Object createBean(BeanDefinition beanDefinition) {
         Class<?> clz = null;
         Object obj = null;
