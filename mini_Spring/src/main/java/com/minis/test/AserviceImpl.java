@@ -54,4 +54,12 @@ public class AserviceImpl {
     public void setProperty2(String property2) {
         this.property2 = property2;
     }
+
+    public BaseService getRef1() {
+        return ref1;
+    }
+
+    public void setRef1(BaseService ref1) {
+        this.ref1 = ref1;
+    }
 }

@@ -11,6 +11,6 @@ public class Test1 {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
         AserviceImpl aserviceImpl = (AserviceImpl) context.getBean("aService");
         // aserviceImpl.setProperty1("Hello World!");
-        System.out.println(aserviceImpl.getProperty1());
+        aserviceImpl.sayHello();
     }
 }

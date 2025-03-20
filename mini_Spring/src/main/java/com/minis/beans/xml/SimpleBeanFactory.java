@@ -174,10 +174,10 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                         paramValues[i] = indexedArgumentValue.getValue();
                     } else if ("Integer".equals(indexedArgumentValue.getType()) ||
                             "java.lang.Integer".equals(indexedArgumentValue.getType())) {
-                        paramValues[i] = Integer.class;
+                        paramTypes[i] = Integer.class;
                         paramValues[i] = Integer.valueOf((String) indexedArgumentValue.getValue());
                     } else if ("int".equals(indexedArgumentValue.getType())) {
-                        paramValues[i] = int.class;
+                        paramTypes[i] = int.class;
                         paramValues[i] = Integer.valueOf((String) indexedArgumentValue.getValue());
                     } else {  // 默认为 String
                         paramTypes[i] = String.class;
@@ -189,7 +189,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 obj = con.newInstance(paramValues);
             } else {
                 // 直接创建实例
-                obj = con.newInstance();
+                obj = clz.newInstance();
             }
             System.out.println(bd.getId() + " bean created. " + bd.getClassName() + " : " + obj.toString());
         } catch (Exception e) {
@@ -206,7 +206,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
      */
     private void handleProperties(BeanDefinition bd, Class<?> clz, Object obj) {
         // 处理属性
-        System.out.println("handle properties foe bean: " + bd.getId());
+        System.out.println("handle properties for bean: " + bd.getId());
         PropertyValues propertyValues = bd.getPropertyValues();
         if (!propertyValues.isEmpty()) {
             for (int i = 0; i < propertyValues.size(); i++) {
@@ -256,6 +256,19 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    /**
+     * 刷新所有单例对象
+     */
+    public void refresh() {
+        for (String beanName : beanDefinitionNames) {
+            try {
+                getBean(beanName);
+            } catch (BeansException e) {
+                e.printStackTrace();
             }
         }
     }

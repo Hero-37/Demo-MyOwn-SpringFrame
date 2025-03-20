@@ -18,7 +18,7 @@ public class ArgumentValues {
      * @param key            用于标识参数值的键
      * @param newValue       需要存储的参数值对象
      */
-    private void addArgumentValue(Integer key, ArgumentValue newValue) {
+    public void addArgumentValue(Integer key, ArgumentValue newValue) {
         this.indexedArgumentValues.put(key, newValue);
     }
 
@@ -37,7 +37,7 @@ public class ArgumentValues {
      * @return
      */
     public ArgumentValue getIndexedArgumentValue(int index) {
-        return this.indexedArgumentValues.get(index);
+        return this.genericArgumentValues.get(index);
     }
 
     /**

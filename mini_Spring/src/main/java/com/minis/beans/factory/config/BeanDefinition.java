@@ -10,7 +10,7 @@ public class BeanDefinition {
     /**
      * 是否懒加载, 加载时是否初始化
      */
-    private boolean lazyInit = false;
+    private boolean lazyInit = true;
     /**
      * bean 之间的依赖关系
      */
@@ -78,7 +78,7 @@ public class BeanDefinition {
     }
 
     public boolean isLazyInit() {
-        return lazyInit;
+        return this.lazyInit;
     }
 
     public void setLazyInit(boolean lazyInit) {
