@@ -1,10 +1,10 @@
-package com.minis.beans.xml;
+package com.minis.beans.factory.support;
 
 import com.minis.beans.BeansException;
+import com.minis.beans.PropertyValue;
+import com.minis.beans.PropertyValues;
 import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.config.*;
-import com.minis.beans.factory.support.BeanDefinitionRegistry;
-import com.minis.beans.factory.support.DefaultSingletonBeanRegistry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -158,30 +158,30 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         try {
             clz = Class.forName(bd.getClassName());
             // 处理构造器参数
-            ArgumentValues argumentValues = bd.getConstructorArguments();
+            ConstructorArgumentValues constructorArgumentValues = bd.getConstructorArguments();
             // 如果有参数
-            if (!argumentValues.isEmpty()) {
+            if (!constructorArgumentValues.isEmpty()) {
                 // 参数类型
-                Class<?>[] paramTypes = new Class<?>[argumentValues.getArgumentCount()];
+                Class<?>[] paramTypes = new Class<?>[constructorArgumentValues.getArgumentCount()];
                 // 参数值
-                Object[] paramValues = new Object[argumentValues.getArgumentCount()];
+                Object[] paramValues = new Object[constructorArgumentValues.getArgumentCount()];
                 // 对每一个类型, 分数据类型分别处理
-                for (int i = 0; i < argumentValues.getArgumentCount(); i++) {
-                    ArgumentValue indexedArgumentValue = argumentValues.getIndexedArgumentValue(i);
-                    if ("String".equals(indexedArgumentValue.getType()) ||
-                            "lava.lang.String".equals(indexedArgumentValue.getType())) {
+                for (int i = 0; i < constructorArgumentValues.getArgumentCount(); i++) {
+                    ConstructorArgumentValue indexedConstructorArgumentValue = constructorArgumentValues.getIndexedArgumentValue(i);
+                    if ("String".equals(indexedConstructorArgumentValue.getType()) ||
+                            "lava.lang.String".equals(indexedConstructorArgumentValue.getType())) {
                         paramTypes[i] = String.class;
-                        paramValues[i] = indexedArgumentValue.getValue();
-                    } else if ("Integer".equals(indexedArgumentValue.getType()) ||
-                            "java.lang.Integer".equals(indexedArgumentValue.getType())) {
+                        paramValues[i] = indexedConstructorArgumentValue.getValue();
+                    } else if ("Integer".equals(indexedConstructorArgumentValue.getType()) ||
+                            "java.lang.Integer".equals(indexedConstructorArgumentValue.getType())) {
                         paramTypes[i] = Integer.class;
-                        paramValues[i] = Integer.valueOf((String) indexedArgumentValue.getValue());
-                    } else if ("int".equals(indexedArgumentValue.getType())) {
+                        paramValues[i] = Integer.valueOf((String) indexedConstructorArgumentValue.getValue());
+                    } else if ("int".equals(indexedConstructorArgumentValue.getType())) {
                         paramTypes[i] = int.class;
-                        paramValues[i] = Integer.valueOf((String) indexedArgumentValue.getValue());
+                        paramValues[i] = Integer.valueOf((String) indexedConstructorArgumentValue.getValue());
                     } else {  // 默认为 String
                         paramTypes[i] = String.class;
-                        paramValues[i] = indexedArgumentValue.getValue();
+                        paramValues[i] = indexedConstructorArgumentValue.getValue();
                     }
                 }
                 // 按照特定构造器创建实例

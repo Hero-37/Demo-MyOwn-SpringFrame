@@ -5,11 +5,11 @@ import java.util.*;
 /**
  * @author YuLong
  */
-public class ArgumentValues {
-    private final Map<Integer, ArgumentValue> indexedArgumentValues = new HashMap<>();
-    private final List<ArgumentValue> genericArgumentValues = new LinkedList<>();
+public class ConstructorArgumentValues {
+    private final Map<Integer, ConstructorArgumentValue> indexedArgumentValues = new HashMap<>();
+    private final List<ConstructorArgumentValue> genericConstructorArgumentValues = new LinkedList<>();
 
-    public ArgumentValues() {
+    public ConstructorArgumentValues() {
     }
 
     /**
@@ -18,7 +18,7 @@ public class ArgumentValues {
      * @param key            用于标识参数值的键
      * @param newValue       需要存储的参数值对象
      */
-    public void addArgumentValue(Integer key, ArgumentValue newValue) {
+    public void addArgumentValue(Integer key, ConstructorArgumentValue newValue) {
         this.indexedArgumentValues.put(key, newValue);
     }
 
@@ -36,8 +36,8 @@ public class ArgumentValues {
      * @param index
      * @return
      */
-    public ArgumentValue getIndexedArgumentValue(int index) {
-        return this.genericArgumentValues.get(index);
+    public ConstructorArgumentValue getIndexedArgumentValue(int index) {
+        return this.genericConstructorArgumentValues.get(index);
     }
 
     /**
@@ -46,27 +46,27 @@ public class ArgumentValues {
      * @param type
      */
     private void addGenericArgumentValue(Object value, String type) {
-        this.genericArgumentValues.add(new ArgumentValue(value, type));
+        this.genericConstructorArgumentValues.add(new ConstructorArgumentValue(value, type));
     }
 
     /**
      * 将指定参数值对象添加到通用参数值列表中。
      * @param newValue
      */
-    public void addArgumentValue(ArgumentValue newValue) {
+    public void addArgumentValue(ConstructorArgumentValue newValue) {
         if (newValue.getName() != null) {
-            for (Iterator<ArgumentValue> it = this.genericArgumentValues.iterator(); it.hasNext();) {
-                ArgumentValue currentValue = it.next();
+            for (Iterator<ConstructorArgumentValue> it = this.genericConstructorArgumentValues.iterator(); it.hasNext();) {
+                ConstructorArgumentValue currentValue = it.next();
                 if (newValue.getName().equals(currentValue.getName())) {
                     it.remove();
                 }
             }
         }
-        this.genericArgumentValues.add(newValue);
+        this.genericConstructorArgumentValues.add(newValue);
     }
 
-    public ArgumentValue getGenericArgumentValue(String requiredName) {
-        for (ArgumentValue valueHolder : this.genericArgumentValues) {
+    public ConstructorArgumentValue getGenericArgumentValue(String requiredName) {
+        for (ConstructorArgumentValue valueHolder : this.genericConstructorArgumentValues) {
             boolean isNotExist = valueHolder.getName() != null && (requiredName == null || !valueHolder.getName().equals(requiredName));
             if (isNotExist) {
                 continue;
@@ -80,7 +80,7 @@ public class ArgumentValues {
      * 获取通用参数值列表的大小。
      */
     public int getArgumentCount() {
-        return this.genericArgumentValues.size();
+        return this.genericConstructorArgumentValues.size();
     }
 
     /**
@@ -88,6 +88,6 @@ public class ArgumentValues {
      * @return
      */
     public boolean isEmpty() {
-        return this.genericArgumentValues.isEmpty();
+        return this.genericConstructorArgumentValues.isEmpty();
     }
 }
