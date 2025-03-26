@@ -15,10 +15,10 @@ import java.util.List;
  */
 public class XmlBeanDefinitionReader {
 
-    SimpleBeanFactory simpleBeanFactory;
+    AutowireCapableBeanFactory beanFactory;
 
-    public XmlBeanDefinitionReader(SimpleBeanFactory simpleBeanFactory) {
-        this.simpleBeanFactory = simpleBeanFactory;
+    public XmlBeanDefinitionReader(AutowireCapableBeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
     }
 
     public void loadBeanDefinitions(Resource resource) {
@@ -64,7 +64,7 @@ public class XmlBeanDefinitionReader {
 
             String[] refArray = refs.toArray(new String[0]);
             beanDefinition.setDependsOn(refArray);
-            this.simpleBeanFactory.registerBeanDefinition(beanId, beanDefinition);
+            this.beanFactory.registerBeanDefinition(beanId, beanDefinition);
         }
     }
 }
