@@ -1,16 +1,27 @@
 package com.minis.test;
 
+import com.minis.beans.factory.annotation.Autowired;
+
 /**
  * @author YuLong
  */
 public class BaseService {
-    private BaseBaseService baseBaseService;
+    @Autowired
+    private BaseBaseService basebaseservice;
+
+    public BaseService() {
+    }
 
     public BaseBaseService getBaseBaseService() {
-        return baseBaseService;
+        return basebaseservice;
     }
 
     public void setBaseBaseService(BaseBaseService baseBaseService) {
-        this.baseBaseService = baseBaseService;
+        this.basebaseservice = baseBaseService;
+    }
+
+    public void sayHello() {
+        System.out.println("Base Service says Hello");
+        basebaseservice.sayHello();
     }
 }

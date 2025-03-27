@@ -13,4 +13,9 @@ public class BaseBaseService {
     public void setAserviceImpl(AserviceImpl aserviceImpl) {
         this.aserviceImpl = aserviceImpl;
     }
+
+    public void sayHello() {
+        System.out.println("BaseBaseService says Hello");
+        aserviceImpl.sayHello();
+    }
 }

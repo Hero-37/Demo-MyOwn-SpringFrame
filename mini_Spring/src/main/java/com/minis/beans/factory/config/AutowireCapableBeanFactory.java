@@ -21,6 +21,7 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
 
     /**
      * 获取BeanPostProcessor的数量
+     *
      * @return
      */
     public int getBeanPostProcessorCount() {

@@ -173,38 +173,55 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         try {
             clz = Class.forName(beanDefinition.getClassName());
             ConstructorArgumentValues constructorArguments = beanDefinition.getConstructorArguments();
-            if (!constructorArguments.isEmpty()) {
-                Class<?>[] paramTypes = new Class<?>[constructorArguments.getArgumentCount()];
-                Object[] paramValues = new Object[constructorArguments.getArgumentCount()];
-                for (int i = 0; i < constructorArguments.getArgumentCount(); i++) {
-                    ConstructorArgumentValue constructorArgumentValue = constructorArguments.getIndexedArgumentValue(i);
-                    if ("String".equals(constructorArgumentValue.getType()) ||
-                            "lava.lang.String".equals(constructorArgumentValue.getType())) {
-                        paramTypes[i] = String.class;
-                        paramValues[i] = constructorArgumentValue.getValue();
-                    } else if ("Integer".equals(constructorArgumentValue.getType()) ||
-                            "java.lang.Integer".equals(constructorArgumentValue.getType())) {
-                        paramTypes[i] = Integer.class;
-                        paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue());
-                    } else if ("int".equals(constructorArgumentValue.getType())) {
-                        paramTypes[i] = int.class;
-                        paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue());
-                    } else {  // 默认为 String
-                        paramTypes[i] = String.class;
-                        paramValues[i] = constructorArgumentValue.getValue();
+            if (constructorArguments != null) {
+                if (!constructorArguments.isEmpty()) {
+                    Class<?>[] paramTypes = new Class<?>[constructorArguments.getArgumentCount()];
+                    Object[] paramValues = new Object[constructorArguments.getArgumentCount()];
+                    for (int i = 0; i < constructorArguments.getArgumentCount(); i++) {
+                        ConstructorArgumentValue constructorArgumentValue = constructorArguments.getIndexedArgumentValue(i);
+                        if ("String".equals(constructorArgumentValue.getType()) ||
+                                "lava.lang.String".equals(constructorArgumentValue.getType())) {
+                            paramTypes[i] = String.class;
+                            paramValues[i] = constructorArgumentValue.getValue();
+                        } else if ("Integer".equals(constructorArgumentValue.getType()) ||
+                                "java.lang.Integer".equals(constructorArgumentValue.getType())) {
+                            paramTypes[i] = Integer.class;
+                            paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue());
+                        } else if ("int".equals(constructorArgumentValue.getType())) {
+                            paramTypes[i] = int.class;
+                            paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue());
+                        } else {  // 默认为 String
+                            paramTypes[i] = String.class;
+                            paramValues[i] = constructorArgumentValue.getValue();
+                        }
+                    }
+                    try {
+                        con = clz.getConstructor(paramTypes);
+                        obj = con.newInstance(paramValues);
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        obj = clz.newInstance();
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
                     }
                 }
-
+            } else {
                 try {
-                    con = clz.getConstructor(paramTypes);
-                    obj = con.newInstance(paramValues);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
+                    obj = clz.newInstance();
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }

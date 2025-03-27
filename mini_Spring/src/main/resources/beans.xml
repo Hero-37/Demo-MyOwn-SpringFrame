@@ -14,6 +14,6 @@
     </bean>
 
     <bean id = "baseservice" class = "com.minis.test.BaseService">
-        <property type="com.minis.test.BaseBaseService" name="baseBaseService" ref="basebaseservice"/>
+        <!--<property type="com.minis.test.BaseBaseService" name="baseBaseService" ref="basebaseservice"/>-->
     </bean>
 </beans>
