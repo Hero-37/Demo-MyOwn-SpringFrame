@@ -15,9 +15,9 @@ import java.util.List;
  */
 public class XmlBeanDefinitionReader {
 
-    AutowireCapableBeanFactory beanFactory;
+    SimpleBeanFactory beanFactory;
 
-    public XmlBeanDefinitionReader(AutowireCapableBeanFactory beanFactory) {
+    public XmlBeanDefinitionReader(SimpleBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 

@@ -1,6 +1,7 @@
 package com.minis.beans.factory.config;
 
 import com.minis.beans.BeansException;
+import com.minis.beans.factory.BeanFactory;
 
 /**
  * @author YuLong
@@ -21,4 +22,10 @@ public interface BeanPostProcessor {
      * @return
      */
     Object postProcessAfterInitialization(Object bean, String beanName);
+
+    /**
+     * 设置 beanFactory
+     * @param beanFactory
+     */
+    void setBeanFactory(BeanFactory beanFactory);
 }
