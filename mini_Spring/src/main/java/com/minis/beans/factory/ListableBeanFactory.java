@@ -35,10 +35,11 @@ public interface ListableBeanFactory extends BeanFactory {
     String[] getBeanNamesForType(Class<?> type);
 
     /**
-     * 根据类型获取 Bean
+     * 根据 type 获取 Bean
      * @param type
      * @param <T>
      * @return
+     * @throws BeansException
      */
     <T> Map<String, T> getBeansOfType(Class<T> type) throws BeansException;
 }
