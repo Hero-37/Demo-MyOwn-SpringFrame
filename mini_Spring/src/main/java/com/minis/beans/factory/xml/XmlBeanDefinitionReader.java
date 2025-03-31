@@ -2,6 +2,7 @@ package com.minis.beans.factory.xml;
 
 import com.minis.beans.PropertyValue;
 import com.minis.beans.PropertyValues;
+import com.minis.beans.factory.support.DefaultListableBeanFactory;
 import com.minis.beans.factory.support.SimpleBeanFactory;
 import com.minis.beans.factory.config.*;
 import com.minis.core.Resource;
@@ -15,9 +16,9 @@ import java.util.List;
  */
 public class XmlBeanDefinitionReader {
 
-    SimpleBeanFactory beanFactory;
+    DefaultListableBeanFactory beanFactory;
 
-    public XmlBeanDefinitionReader(SimpleBeanFactory beanFactory) {
+    public XmlBeanDefinitionReader(DefaultListableBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 
