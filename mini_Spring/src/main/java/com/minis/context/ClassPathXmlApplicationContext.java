@@ -2,7 +2,6 @@ package com.minis.context;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
-import com.minis.beans.factory.config.AbstractAutowireCapableBeanFactory;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.support.DefaultListableBeanFactory;
@@ -133,6 +132,11 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     @Override
     public Class<?> getType(String beanName) {
         return null;
+    }
+
+    @Override
+    public ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException {
+        return this.beanFactory;
     }
 
     @Override

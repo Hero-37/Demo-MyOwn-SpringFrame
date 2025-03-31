@@ -147,9 +147,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     }
 
     @Override
-    public ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException {
-        return getBeanFactory();
-    }
+    public abstract ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException;
 
     @Override
     public void setEnvironment(Environment environment) {
