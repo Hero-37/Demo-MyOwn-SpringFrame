@@ -2,6 +2,7 @@ package com.minis.context;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
+import com.minis.beans.factory.annotation.RequireAnnotationBeanPostProcessor;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
 import com.minis.beans.factory.config.ConfigurableListableBeanFactory;
 import com.minis.beans.factory.support.DefaultListableBeanFactory;
@@ -91,6 +92,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
     private void registerBeanPostProcessors(DefaultListableBeanFactory beanFactory) {
         beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
+        beanFactory.addBeanPostProcessor(new RequireAnnotationBeanPostProcessor());
     }
 
     @Override

@@ -1,11 +1,14 @@
 package com.minis.test;
 
+import com.minis.beans.factory.annotation.Require;
+
 /**
  * @author YuLong
  */
 public class AserviceImpl {
     private String name;
     private int level;
+    @Require
     private String property1;
     private String property2;
     private BaseService ref1;

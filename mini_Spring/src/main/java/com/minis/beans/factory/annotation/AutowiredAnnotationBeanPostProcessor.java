@@ -33,7 +33,7 @@ public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor {
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
-                    System.out.println("aotowire " + fieldName + " for bean " + beanName);
+                    System.out.println("autowire " + fieldName + " for bean " + beanName);
                 }
             }
         }
@@ -42,7 +42,7 @@ public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) {
-        return null;
+        return bean;
     }
 
     @Override
